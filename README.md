@@ -30,6 +30,9 @@ Just add a dictionary (`{}`) into the configuration array.
 
 ##### The fields are the following:
 `name`: (string) Name of the navigation item that will be created in the Collab when the user select this notebook.
+
 `uri`: (string) Full url of the notebook in Github (to obtain this just open the notebook in Github and click on Raw, then copy the url).
+
 `txtToReplace`: (string) Placeholder that must be present on the notebook for being replaced by the user simulation url.
+
 `appId`: (number) [keep 410] Application id, normal jupyter notebook 175, notebook with mount 410.
