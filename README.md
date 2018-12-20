@@ -4,12 +4,22 @@
 
 - Open https://collab.humanbrainproject.eu/#/collab/33645/nav/233818
 - In Navigation (left side) click on ADD -> search for `sp6mooc` -> click Add to Navigation
-- Example notebook https://collab.humanbrainproject.eu/#/collab/33645/nav/252688
-- Beware of adding a placeholder like `SIMULATION_URL` so it is replaced and we can fetch the simulation results. (For testing I would suggest to comment this out and use directly the full url of your job)
+- Example notebook https://collab.humanbrainproject.eu/#/collab/33645/nav/233822
 
 ### Put notebook in Github
 
-Just download the notebook from the Collab (File -> Download) and upload it to the repo.
+1) Change:
+    ```
+    job_url = 'https://zam2125...'
+    dynamic_analysis_pkg.fetch_results(oauth.get_token(), job_url)
+    ```
+    by
+    ```
+    dynamic_analysis_pkg.fetch_results(oauth.get_token(), SIMULATION_URL)
+    ```
+
+2) Download the notebook from the Collab (File -> Download)
+3) Upload it to the Github repo
 
 ### Modify configuration
 
