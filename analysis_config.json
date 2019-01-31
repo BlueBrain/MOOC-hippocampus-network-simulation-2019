@@ -1,6 +1,6 @@
 [
   {
-    "name": "Anlysis1",
+    "name": "Analyse Connectivity",
     "uri": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/sp6test.ipynb",
     "txtToReplace": "SIMULATION_URL",
     "appId": 410
