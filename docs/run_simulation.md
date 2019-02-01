@@ -33,13 +33,26 @@ In this section we will define the resources that we want to use for the previou
 -  Click on ‘Continue’ button.
 - A new window will pop-up and it should looks like the one below (in case of question please check the full doucmentation mentioned above)
 
-    ![define_unicore_params](images/unicore_params.png)
+  ![define_unicore_params](images/unicore_params.png)
 
 - You can check the BlueConfig clicking on Preview BlueConfig
 - Start the simulation clicking on ‘Run Simulation’ button.
 - After the simulation starts you will be redirected to a detail page.
 
+## Run Predefined Analysis
+In this section you will learn how to launch some predefined analysis like: _Peristimulus Time Histogram_, _Spike Raster Plot_ or _Voltage Trace Plot_
 
+- Go to the list of the simulations and click Analyze
+
+  ![simulation_list](images/simulation_list.png)
+
+- Configure which analysis you want to run and how many cells (neurons) you want to analyze
+
+  ![launch_analysis](images/launch_analysis.png)
+
+- After the analysis are done you should see a result that looks like
+
+  ![analysis_results](images/analysis_results.png)
 
 ## Run Analysis in Jupyter Notebook
 In this section you will learn how to analyse a simulation using Jupyter Notebook in Collab.

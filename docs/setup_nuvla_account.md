@@ -25,8 +25,3 @@
     - Make sure that your default cloud is set to **exoscale-ch-gva**
 
     ![change_timeout](images/timeout.png)
-
-
-![](images/.png)
-
-![](images/.png)
