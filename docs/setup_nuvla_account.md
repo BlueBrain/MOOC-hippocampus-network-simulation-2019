@@ -4,7 +4,7 @@
 
     ![signup](images/signup.png)
 
-3) Enter the **coupon** that you have received in the coupon section
+3) Select **Human Brain Project** and enter the **coupon** that you have received in the coupon section
 
     ![insert_coupon](images/hbp.png)
 
@@ -25,3 +25,5 @@
     - Make sure that your default cloud is set to **exoscale-ch-gva**
 
     ![change_timeout](images/timeout.png)
+
+8) Save Changes
