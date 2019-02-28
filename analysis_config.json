@@ -1,8 +1,17 @@
 [
   {
-    "name": "Analyse Connectivity",
-    "uri": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/sp6test.ipynb",
-    "txtToReplace": "SIMULATION_URL",
+    "name": "Density Analysis",
+    "uri": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/notebooks/density_analysis.ipynb",
+    "appId": 410
+  },
+  {
+    "name": "Common Neighbor 1",
+    "uri": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/notebooks/common_neighbor_1.ipynb",
+    "appId": 410
+  },
+  {
+    "name": "Common Neighbor 2",
+    "uri": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/notebooks/common_neighbor_2.ipynb",
     "appId": 410
   }
 ]
