@@ -13,5 +13,10 @@
     "name": "Common Neighbor 2",
     "uri": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/notebooks/common_neighbor_2.ipynb",
     "appId": 410
+  },
+  {
+    "name": "External Innervation",
+    "uri": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/notebooks/external_innervation.ipynb",
+    "appId": 410
   }
 ]
