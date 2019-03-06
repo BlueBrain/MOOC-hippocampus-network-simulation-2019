@@ -1,5 +1,11 @@
 [
   {
+    "name": "Fetch Sim Results",
+    "uri": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/notebooks/fetch_sim_results.ipynb.ipynb",
+    "txtToReplace": "SIMULATION_ID",
+    "appId": 410
+  },
+  {
     "name": "Density Analysis",
     "uri": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/notebooks/density_analysis.ipynb",
     "appId": 410
