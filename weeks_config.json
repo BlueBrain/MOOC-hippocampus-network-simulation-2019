@@ -1,0 +1,88 @@
+[
+  {
+    "title": "Week 2: Working with circuit models in the Brain Simulation Platform",
+    "description": "",
+    "experience": ["all"],
+    "picture": {
+      "src": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/images/course-img.jpg",
+      "alt": "MOOC week logo"
+    },
+    "next": "mooc_form",
+    "files": [
+      {
+        "entryname": "Week 2. Analysis of densities",
+        "appid": 410,
+        "contenttype": "x-ipynb+json",
+        "extension": ".ipynb",
+        "file": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/notebooks/density_analysis.ipynb",
+        "initial": true
+      },
+      {
+        "entryname": "Week 2. Analysis of external innervation",
+        "appid": 410,
+        "contenttype": "x-ipynb+json",
+        "extension": ".ipynb",
+        "file": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/notebooks/external_innervation.ipynb"
+      }
+    ]
+  },
+  {
+    "title": "Week 3: Simulation",
+    "description": "",
+    "experience": ["all"],
+    "picture": {
+      "src": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/images/course-img.jpg",
+      "alt": "MOOC week logo"
+    },
+    "next": "mooc_form",
+    "files": [
+      {
+        "entryname": "Week 3. Simulation Launcher GUI",
+        "appid": 92,
+        "url": "https://bbp.epfl.ch/public/simulationapp/index.html#/circuits/microcircuit",
+        "initial": true
+      }
+    ]
+  },
+  {
+    "title": "Week 4: Analysing connectomes",
+    "description": "",
+    "experience": ["all"],
+    "picture": {
+      "src": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/images/course-img.jpg",
+      "alt": "MOOC week logo"
+    },
+    "next": "mooc_form",
+    "files": [
+      {
+        "entryname": "Week 4. Bouton density",
+        "appid": 410,
+        "contenttype": "x-ipynb+json",
+        "extension": ".ipynb",
+        "file": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/notebooks/bouton_density.ipynb",
+        "initial": true
+      },
+      {
+        "entryname": "Week 4. Number of synapses per connection",
+        "appid": 410,
+        "contenttype": "x-ipynb+json",
+        "extension": ".ipynb",
+        "file": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/notebooks/nsyns_per_conn.ipynb"
+      },
+      {
+        "entryname": "Week 4. Common neighbor analysis 1",
+        "appid": 410,
+        "contenttype": "x-ipynb+json",
+        "extension": ".ipynb",
+        "file": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/notebooks/common_neighbor_1.ipynb"
+      },
+      {
+        "entryname": "Week 4. Common neighbor analysis 2",
+        "appid": 410,
+        "contenttype": "x-ipynb+json",
+        "extension": ".ipynb",
+        "file": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/master/notebooks/common_neighbor_2.ipynb"
+      }
+    ]
+  }
+]
