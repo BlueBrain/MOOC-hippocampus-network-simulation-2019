@@ -78,6 +78,9 @@ class Results:
     def download_report(self):
         # find report
         report = next((x for x in self.files_list if '_report_' in x), None)
+        if not report:
+            print('No reports were found')
+            return
         self.download_file_to_storage(report)
 
     def download_out_dat(self):

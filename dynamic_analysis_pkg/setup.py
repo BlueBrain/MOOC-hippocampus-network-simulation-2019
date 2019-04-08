@@ -1,7 +1,7 @@
 from setuptools import setup
 
 setup(name='dynamic_analysis_pkg',
-      version='0.1.3',
+      version='0.1.4',
       description='Machinary to run analysis based on simulation url',
       author='Stefano Antonel',
       author_email='stefano.antonel@epfl.ch',
