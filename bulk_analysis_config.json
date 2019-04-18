@@ -1,6 +1,6 @@
 [
   {
-    "name": "Bulk Comparision",
+    "name": "Bulk Fetch",
     "uri": "https://raw.githubusercontent.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/bulk-analysis/notebooks/bulk_fetch.ipynb",
     "txtToReplace": "PLACEHOLDER",
     "appId": 410
