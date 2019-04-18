@@ -6,15 +6,19 @@ import pyunicore.client as unicore_client
 
 class Results:
 
-    base = 'https://zam2125.zam.kfa-juelich.de:9112/NUVLA/rest/core'
-    job_base = join(base, 'jobs')
+    BASE = 'https://zam2125.zam.kfa-juelich.de:9112/NUVLA/rest/core'
+    CIRCUIT_DIR = '/mnt/circuits/O1/20181114'
+    DEFAULT_WD_BASE = '/home/jovyan/tmp/test_pull_unicore';
+    job_base = join(BASE, 'jobs')
     files_list = None
     circuit_dir = None
     local_dir = None
     blueconfig = None
 
-    def __init__(self, token, sim_id):
-        self.define_paths()
+    def __init__(self, token, sim_id, base_working_directory=None):
+        if base_working_directory == None:
+            base_working_directory = self.DEFAULT_WD_BASE
+        self.define_paths(base_working_directory, sim_id)
         self.fetch_results(token, sim_id)
         self.blueconfig = join(self.local_dir, 'BlueConfig')
 
@@ -38,19 +42,15 @@ class Results:
         self.download_report()
         self.download_out_dat()
 
-    def define_paths(self,
-                     working_directory='/home/jovyan/tmp/test_pull_unicore',
-                     circuit_config='/mnt/circuits/O1/20181114'):
-
-        self.local_dir = working_directory
+    def define_paths(self, working_directory, sim_id):
+        self.local_dir = join(working_directory, sim_id)
         if not exists(self.local_dir):
-            print('Creating working directory: {}'.format(working_directory))
             makedirs(self.local_dir)
 
-        if not isdir(circuit_config):
-            circuit_directory = basename(circuit_config)
+        if not isdir(self.CIRCUIT_DIR):
+            circuit_directory = basename(self.CIRCUIT_DIR)
         else:
-            circuit_directory = circuit_config
+            circuit_directory = self.CIRCUIT_DIR
         self.circuit_dir = circuit_directory
 
     def download_file_to_storage(self, file_name):
@@ -85,3 +85,15 @@ class Results:
 
     def download_out_dat(self):
         self.download_file_to_storage('out.dat')
+
+
+class FetchMultipleResults:
+
+    values = []
+
+    def __init__(self, token, sim_list_ids, base_working_directory=None):
+
+        total_sims = len(sim_list_ids)
+        for idx, sim in enumerate(sim_list_ids):
+            print('({}/{})'.format(idx + 1, total_sims))
+            self.values.append(Results(token, sim, base_working_directory))
