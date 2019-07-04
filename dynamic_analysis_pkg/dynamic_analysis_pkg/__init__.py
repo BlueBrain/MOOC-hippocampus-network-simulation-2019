@@ -1,79 +1,102 @@
-
 from os import makedirs
 from os.path import join, exists, isdir, basename
+from shutil import move
 import pyunicore.client as unicore_client
 
 
 class Results:
 
-    BASE = 'https://zam2125.zam.kfa-juelich.de:9112/NUVLA/rest/core'
-    CIRCUIT_DIR = '/mnt/circuits/O1/20181114'
-    DEFAULT_WD_BASE = '/home/jovyan/tmp/test_pull_unicore';
-    job_base = join(BASE, 'jobs')
+    DEFAULT_WD = '/home/jovyan/tmp/test_pull_unicore'
+
+    HPC_CONSTANTS = {
+        'NUVLA': {
+            'URL': 'https://zam2125.zam.kfa-juelich.de:9112/NUVLA/rest/core',
+            'CIRCUIT': '/mnt/circuits/O1/20181114',
+        },
+        'PIZ_DAINT': {
+            'URL': 'https://brissago.cscs.ch:8080/DAINT-CSCS/rest/core',
+            'CIRCUIT': '/store/hbp/ich002/antonel'
+        }
+    }
+
+    hpc_base_url = None
     files_list = None
-    circuit_dir = None
     local_dir = None
     blueconfig = None
+    hpc_name = None
 
-    def __init__(self, token, sim_id, base_working_directory=None):
-        if base_working_directory == None:
-            base_working_directory = self.DEFAULT_WD_BASE
+
+    def __init__(self, token, sim_id, hpc_name=None, base_working_directory=None):
+        if not token:
+            print('[ERROR] token was not provided')
+            return
+
+        if not sim_id:
+            print('[ERROR] simulation id was not provided')
+            return
+
+        self.hpc_name = hpc_name if hpc_name else 'NUVLA'
+        print('self.hpc_name {}'.format(self.hpc_name))
+
+        self.hpc_base_url = self.HPC_CONSTANTS[self.hpc_name]['URL']
+        print('self.hpc_base_url {}'.format(self.hpc_base_url))
+
+        base_working_directory = base_working_directory if base_working_directory else self.DEFAULT_WD
+        print('base_working_directory {}'.format(base_working_directory))
+
         self.define_paths(base_working_directory, sim_id)
         self.fetch_results(token, sim_id)
         self.blueconfig = join(self.local_dir, 'BlueConfig')
 
-    def fetch_results(self, token, sim_id=None):
-        if not sim_id:
-            print('[Error] Provide Simulation ID')
-            return
-        self.retrieve_sim_info(token, sim_id)
-        self.get_sim_results()
-
-    def retrieve_sim_info(self, token, sim_id=None):
-        tr = unicore_client.Transport(token)
-        job_url = join(self.job_base, sim_id)
-        job = unicore_client.Job(tr, job_url)
-        print('Fetching results of: {}'.format(job.properties['name']))
-        storage = job.working_dir
-        self.files_list = storage.listdir()
-
-    def get_sim_results(self):
-        self.download_blueconfig()
-        self.download_report()
-        self.download_out_dat()
 
     def define_paths(self, working_directory, sim_id):
         self.local_dir = join(working_directory, sim_id)
         if not exists(self.local_dir):
             makedirs(self.local_dir)
 
-        if not isdir(self.CIRCUIT_DIR):
-            circuit_directory = basename(self.CIRCUIT_DIR)
-        else:
-            circuit_directory = self.CIRCUIT_DIR
-        self.circuit_dir = circuit_directory
 
-    def download_file_to_storage(self, file_name):
-        # function to download the file and add it to kernel file system
-        x = self.files_list[file_name]
-        file_content = x.raw().read()
+    def fetch_results(self, token, sim_id):
+        self.retrieve_sim_info(token, sim_id)
+        self.get_sim_results()
 
-        new_path = join(self.local_dir, file_name)
 
-        if file_name == 'BlueConfig':
-            writable_content = file_content.replace('/mooc', '/mnt')
-            writable_content = writable_content.replace('/io',
-                    self.local_dir)
-        else:
-            writable_content = file_content
+    def retrieve_sim_info(self, token, sim_id):
+        jobs_base = join(self.hpc_base_url, 'jobs')
+        job_url = join(jobs_base, sim_id)
+        tr = unicore_client.Transport(token)
+        job = unicore_client.Job(tr, job_url)
+        print('Fetching results of: {}'.format(job.properties['name']))
+        storage = job.working_dir
+        self.files_list = storage.listdir()
 
-        with open(new_path, 'w') as fd:
-            fd.write(writable_content)
 
-        print('- {} downloaded'.format(file_name))
+    def get_sim_results(self):
+        self.download_blueconfig()
+        self.download_report()
+        self.download_out_dat()
+
 
     def download_blueconfig(self, file_name='BlueConfig'):
         self.download_file_to_storage(file_name)
+
+
+    def download_file_to_storage(self, file_name):
+        # function to download the file and add it to kernel file system
+        new_path = join(self.local_dir, file_name)
+        x = self.files_list[file_name]
+        if self.hpc_name == 'NUVLA' and file_name == 'BlueConfig':
+            # if mooc then modify BlueConfig paths
+            file_content = x.raw().read()
+            writable_content = file_content.replace('/mooc', '/mnt')
+            writable_content = writable_content.replace('/io', self.local_dir)
+            with open(new_path, 'w') as fd:
+                fd.write(writable_content)
+        else:
+            x.download(str(file_name)) # moves to home always
+            move(file_name, new_path)
+
+        print('- {} downloaded'.format(file_name))
+
 
     def download_report(self):
         # find report
@@ -83,8 +106,10 @@ class Results:
             return
         self.download_file_to_storage(report)
 
+
     def download_out_dat(self):
         self.download_file_to_storage('out.dat')
+
 
 
 class FetchMultipleResults:
