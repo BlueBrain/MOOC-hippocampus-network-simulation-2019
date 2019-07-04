@@ -1,3 +1,4 @@
+# !pip install -q https://github.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/raw/create_package/dynamic_analysis_pkg/dist/dynamic_analysis_pkg-0.1.4.tar.gz
 from os import makedirs
 from os.path import join, exists, isdir, basename
 from shutil import move
@@ -84,13 +85,23 @@ class Results:
         # function to download the file and add it to kernel file system
         new_path = join(self.local_dir, file_name)
         x = self.files_list[file_name]
-        if self.hpc_name == 'NUVLA' and file_name == 'BlueConfig':
-            # if mooc then modify BlueConfig paths
+
+        if file_name == 'BlueConfig':
+            # modify the paths
             file_content = x.raw().read()
-            writable_content = file_content.replace('/mooc', '/mnt')
-            writable_content = writable_content.replace('/io', self.local_dir)
+
+            if self.hpc_name == 'NUVLA':
+                writable_content = file_content.replace('/mooc', '/mnt')
+                writable_content = writable_content.replace('/io', self.local_dir)
+            if self.hpc_name == 'PIZ_DAINT':
+                original_path = self.HPC_CONSTANTS[self.hpc_name]['CIRCUIT']
+                writable_content = file_content.replace(original_path, '/mnt')
+                writable_content = writable_content.replace('CurrentDir .', 'CurrentDir {}'.format(self.local_dir))
+                writable_content = writable_content.replace('OutputRoot .', 'OutputRoot {}'.format(self.local_dir))
+
             with open(new_path, 'w') as fd:
                 fd.write(writable_content)
+
         else:
             x.download(str(file_name)) # moves to home always
             move(file_name, new_path)
