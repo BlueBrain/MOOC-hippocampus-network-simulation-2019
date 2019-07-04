@@ -37,13 +37,10 @@ class Results:
             return
 
         self.hpc_name = hpc_name if hpc_name else 'NUVLA'
-        print('self.hpc_name {}'.format(self.hpc_name))
 
         self.hpc_base_url = self.HPC_CONSTANTS[self.hpc_name]['URL']
-        print('self.hpc_base_url {}'.format(self.hpc_base_url))
 
         base_working_directory = base_working_directory if base_working_directory else self.DEFAULT_WD
-        print('base_working_directory {}'.format(base_working_directory))
 
         self.define_paths(base_working_directory, sim_id)
         self.fetch_results(token, sim_id)
