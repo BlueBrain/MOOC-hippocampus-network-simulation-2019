@@ -1,4 +1,4 @@
-# !pip install -q https://github.com/BlueBrain/MOOC-hippocampus-network-simulation-2019/raw/create_package/dynamic_analysis_pkg/dist/dynamic_analysis_pkg-0.1.4.tar.gz
+
 from os import makedirs
 from os.path import join, exists, isdir, basename
 from shutil import move
@@ -93,6 +93,7 @@ class Results:
             if self.hpc_name == 'NUVLA':
                 writable_content = file_content.replace('/mooc', '/mnt')
                 writable_content = writable_content.replace('/io', self.local_dir)
+
             if self.hpc_name == 'PIZ_DAINT':
                 original_path = self.HPC_CONSTANTS[self.hpc_name]['CIRCUIT']
                 writable_content = file_content.replace(original_path, '/mnt')
