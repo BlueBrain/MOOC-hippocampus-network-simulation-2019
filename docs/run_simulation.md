@@ -46,7 +46,7 @@ In this section you will learn how to launch some predefined analysis like: _Per
 
   ![simulation_list](images/simulation_list.png)
 
-- Configure which analysis you want to run and how many cells (neurons) you want to analyze
+- Configure which analysis you want to run and which cells (neurons) you want to analyze
 
   ![launch_analysis](images/launch_analysis.png)
 
