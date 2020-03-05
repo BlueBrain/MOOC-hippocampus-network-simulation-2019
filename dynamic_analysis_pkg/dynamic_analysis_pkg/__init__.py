@@ -88,12 +88,12 @@ class Results:
         self.download_file_to_storage(file_name)
 
     def download_report(self):
-        # find report
-        report = next((x for x in self.files_list if '_report_' in x), None)
-        if not report:
+        reports = [x for x in self.files_list if '.bbp' in x]
+        if not reports:
             print('No reports were found')
             return
-        self.download_file_to_storage(report)
+        for report in reports:
+            self.download_file_to_storage(report)
 
     def download_out_dat(self):
         self.download_file_to_storage('out.dat')
