@@ -62,6 +62,11 @@ class Results:
 
     def download_file_to_storage(self, file_name):
         # function to download the file and add it to kernel file system
+        file_output_path = join(self.local_dir, file_name)
+        if exists(file_output_path):
+            print('- [{}] file already exists. Skipping download.'.format(file_name))
+            return
+
         print('- Fetching [{}] ...'.format(file_name))
         x = self.files_list[file_name]
         file_content = x.raw().read()
@@ -74,7 +79,7 @@ class Results:
         else:
             writable_content = file_content
 
-        with open(join(self.local_dir, file_name), 'wb') as fd:
+        with open(file_output_path, 'wb') as fd:
             fd.write(writable_content)
 
         print('- [{}] downloaded'.format(file_name))
