@@ -6,25 +6,30 @@ import pyunicore.client as unicore_client
 
 class Results:
 
-    BASE = 'https://zam2125.zam.kfa-juelich.de:9112/NUVLA/rest/core'
-    CIRCUIT_DIR = '/mnt/circuits/O1/20181114'
-    DEFAULT_WD_BASE = '/home/jovyan/tmp/test_pull_unicore';
-    job_base = join(BASE, 'jobs')
+    UNICORE_ENDPOINT = 'https://bspsa.cineca.it/advanced/pizdaint/rest/core'
+    DEFAULT_CIRCUIT_DIR = '/home/data-bbp/20191017/'
+    DEFAULT_WD_BASE = '/home/simulation-results';
+    ORIGIN_CIRCUIT_PATH = '/store/hbp/ich002/antonel/O1/20191017/'
+    ORIGIN_DIR_PATH = '/scratch/snx3000/unicore/FILESPACE/'
+    job_base = join(UNICORE_ENDPOINT, 'jobs')
     files_list = None
     circuit_dir = None
     local_dir = None
     blueconfig = None
 
-    def __init__(self, token, sim_id, base_working_directory=None):
+    def __init__(self, token, sim_id, base_working_directory=None, new_circuit_path=None):
         if base_working_directory == None:
             base_working_directory = self.DEFAULT_WD_BASE
-        self.define_paths(base_working_directory, sim_id)
+        if new_circuit_path == None:
+            new_circuit_path = self.DEFAULT_CIRCUIT_DIR
+
+        self.define_paths(sim_id, base_working_directory, new_circuit_path)
         self.fetch_results(token, sim_id)
         self.blueconfig = join(self.local_dir, 'BlueConfig')
 
     def fetch_results(self, token, sim_id=None):
         if not sim_id:
-            print('[Error] Provide Simulation ID')
+            print('[Error] Simulation ID not provided')
             return
         self.retrieve_sim_info(token, sim_id)
         self.get_sim_results()
@@ -33,7 +38,7 @@ class Results:
         tr = unicore_client.Transport(token)
         job_url = join(self.job_base, sim_id)
         job = unicore_client.Job(tr, job_url)
-        print('Fetching results of: {}'.format(job.properties['name']))
+        print('Fetching results of [{}]. Please wait ...'.format(job.properties['name']))
         storage = job.working_dir
         self.files_list = storage.listdir()
 
@@ -41,36 +46,38 @@ class Results:
         self.download_blueconfig()
         self.download_report()
         self.download_out_dat()
+        print('Result were saved at: {}'.format(self.local_dir))
 
-    def define_paths(self, working_directory, sim_id):
+    def define_paths(self, sim_id, working_directory, new_circuit_path):
         self.local_dir = join(working_directory, sim_id)
         if not exists(self.local_dir):
             makedirs(self.local_dir)
 
-        if not isdir(self.CIRCUIT_DIR):
-            circuit_directory = basename(self.CIRCUIT_DIR)
+        if not isdir(new_circuit_path):
+            print('[ERROR] Circuit path does not exists')
         else:
-            circuit_directory = self.CIRCUIT_DIR
-        self.circuit_dir = circuit_directory
+            self.circuit_dir = new_circuit_path
+
+        self.ORIGIN_DIR_PATH = join(self.ORIGIN_DIR_PATH, sim_id)
 
     def download_file_to_storage(self, file_name):
         # function to download the file and add it to kernel file system
+        print('- Fetching [{}] ...'.format(file_name))
         x = self.files_list[file_name]
         file_content = x.raw().read()
 
-        new_path = join(self.local_dir, file_name)
-
         if file_name == 'BlueConfig':
-            writable_content = file_content.replace('/mooc', '/mnt')
-            writable_content = writable_content.replace('/io',
-                    self.local_dir)
+            bc_str = file_content.decode('utf-8')
+            writable_content = bc_str.replace(self.ORIGIN_CIRCUIT_PATH, self.circuit_dir)
+            writable_content = writable_content.replace(self.ORIGIN_DIR_PATH, self.local_dir)
+            writable_content = writable_content.encode('utf-8')
         else:
             writable_content = file_content
 
-        with open(new_path, 'w') as fd:
+        with open(join(self.local_dir, file_name), 'wb') as fd:
             fd.write(writable_content)
 
-        print('- {} downloaded'.format(file_name))
+        print('- [{}] downloaded'.format(file_name))
 
     def download_blueconfig(self, file_name='BlueConfig'):
         self.download_file_to_storage(file_name)
