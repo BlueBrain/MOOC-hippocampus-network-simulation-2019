@@ -8,7 +8,6 @@ setup(name='dynamic_analysis_pkg',
       license='MIT',
       packages=['dynamic_analysis_pkg'],
       install_requires=[
-        # 'pyunicore',
-        # 'PyJWT',
+        'pyunicore',
       ],
       zip_safe=True)
