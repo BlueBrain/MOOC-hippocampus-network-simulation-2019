@@ -1,6 +1,7 @@
 
 from os import makedirs
 from os.path import join, exists, isdir, basename
+from shutil import move
 import pyunicore.client as unicore_client
 
 
@@ -69,18 +70,19 @@ class Results:
 
         print('- Fetching [{}] ...'.format(file_name))
         x = self.files_list[file_name]
-        file_content = x.raw().read()
 
         if file_name == 'BlueConfig':
+            file_content = x.raw().read()
             bc_str = file_content.decode('utf-8')
             writable_content = bc_str.replace(self.ORIGIN_CIRCUIT_PATH, self.circuit_dir)
             writable_content = writable_content.replace(self.ORIGIN_DIR_PATH, self.local_dir)
-            writable_content = writable_content.encode('utf-8')
-        else:
-            writable_content = file_content
 
-        with open(file_output_path, 'wb') as fd:
-            fd.write(writable_content)
+            with open(file_output_path, 'w') as fd:
+                fd.write(writable_content)
+
+        else:
+            x.download(str(file_name)) # moves to home always
+            move(file_name, file_output_path)
 
         print('- [{}] downloaded'.format(file_name))
 
