@@ -11,18 +11,11 @@
 - Commit changes and push to the branch (for now `sync-notebooks`)
 
 ### Fetch simulation results on Jupyter Noteboook
-- Import package
+- Use the [notebook](/notebooks/fetch_sim_results.ipynb)
+- Check the paths:
 
-    `import dynamic_analysis_pkg`
+    `sim.blueconfig` will show the path to BlueConfig
 
-- Replace SIM_ID placeholder for your simulation id
+    `sim.circuit_dir` will show the circuit path
 
-    `results = dynamic_analysis_pkg.Results(token, 'SIM_ID')`
-
-- After the download of the files was complete. You can check different paths:
-
-    `results.blueconfig` will show the path to BlueConfig
-
-    `results.circuit_dir` will show the circuit path
-
-    `results.local_dir` will show the location of the files related to the simulation
+    `sim.local_dir` will show the location of the files related to the simulation
