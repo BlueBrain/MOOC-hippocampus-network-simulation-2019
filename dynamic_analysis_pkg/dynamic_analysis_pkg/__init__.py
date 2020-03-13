@@ -2,12 +2,16 @@
 from os import makedirs
 from os.path import join, exists, isdir, basename
 from shutil import move
+from datetime import datetime
+from tabulate import tabulate
 import pyunicore.client as unicore_client
+import pandas as pd
+
+UNICORE_ENDPOINT= 'https://bspsa.cineca.it/advanced/pizdaint/rest/core'
 
 
 class Results:
 
-    UNICORE_ENDPOINT = 'https://bspsa.cineca.it/advanced/pizdaint/rest/core'
     DEFAULT_CIRCUIT_DIR = '/home/data-bbp/20191017/'
     DEFAULT_WD_BASE = '/home/simulation-results';
     ORIGIN_CIRCUIT_PATH = '/store/hbp/ich002/antonel/O1/20191017/'
@@ -111,3 +115,53 @@ class FetchMultipleResults:
         for idx, sim in enumerate(sim_list_ids):
             print('({}/{})'.format(idx + 1, total_sims))
             self.values.append(Results(token, sim, base_working_directory))
+
+
+class JobFinder:
+
+    jobs = []
+    sorted_jobs = None
+
+    def __init__(self, token):
+        tr = unicore_client.Transport(token)
+        client = unicore_client.Client(tr, UNICORE_ENDPOINT)
+        self.jobs = client.get_jobs()
+
+    def show_list(self, amount_jobs_to_show=None):
+        full_jobs_list = []
+        if amount_jobs_to_show is None:
+            amount_jobs_to_show = 1000
+
+        for index, job in enumerate(self.jobs[:amount_jobs_to_show]):
+            raw_time = job.properties['submissionTime']
+            full_time = datetime.strptime(raw_time, '%Y-%m-%dT%H:%M:%S%z')
+            date = full_time.strftime('%d-%m-%Y %H:%M')
+            name = job.properties['name']
+            job_id = basename(job.properties['_links']['self']['href'])
+            full_jobs_list.append([index, name, date, job_id])
+            print('Fetching jobs ({}/{})'.format(index + 1, amount_jobs_to_show or len(jobs) + 1), end = '\r')
+
+        columns = ['index', 'name', 'date', 'job_id']
+        self.sorted_results = pd.DataFrame(full_jobs_list, columns=columns).sort_values(by=['date'])
+
+        pd.options.display.max_columns = None
+        pd.options.display.width=None
+
+        print('\n') # to stop the \r
+        showing_columns = ['index', 'name', 'date']
+        # insert index for user selection
+        self.sorted_results['index'] = range(0, amount_jobs_to_show)
+        print(tabulate(self.sorted_results[showing_columns], headers=showing_columns, showindex=False))
+
+
+    def find_id_by_index(self):
+        job_selection_index = input('Please select the index that you want to import:')
+        try:
+            selected_index = int(job_selection_index)
+        except:
+            print('ERROR: enter correct index')
+
+        selection = self.sorted_results.iloc[int(selected_index)]
+        job_id = selection['job_id']
+        print('ID: {}'.format(job_id))
+        return job_id
