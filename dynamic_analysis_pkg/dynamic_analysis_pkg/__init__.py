@@ -74,15 +74,14 @@ class Results:
             return
 
         L.info('- Fetching [%s] ...', file_name)
-        try:
-            current_file = self.files_list[file_name]
-        except:
-            raise KeyError('The file [{}] is not present on the simulation results'.format(file_name))
+        if file_name not in self.files_list:
+            raise KeyError('The file [{}] is not present on the results'.format(file_name))
+        current_file = self.files_list[file_name]
 
         if file_name == 'BlueConfig':
             file_content = current_file.raw().read()
             bc_str = file_content.decode('utf-8')
-            writable_content = bc_str.replace(self.ORIGIN_CIRCUIT_PATH, self.circuit_dir)
+            writable_content = bc_str.replace(str(self.ORIGIN_CIRCUIT_PATH), str(self.circuit_dir))
             writable_content = writable_content.replace(str(self.hpc_dir_path), str(self.local_dir))
 
             with open(file_output_path, 'w') as fd:
@@ -98,7 +97,6 @@ class Results:
         reports = [x for x in self.files_list if x.endswith('.bbp')]
         if not reports:
             L.info('No reports were found')
-            return
         for report in reports:
             self.download_file_to_storage(report)
 
@@ -151,7 +149,7 @@ class JobFinder:
         except:
             raise ValueError('ERROR: enter correct index')
 
-        selection = self.sorted_results.iloc[int(selected_index)]
+        selection = self.sorted_results.iloc[selected_index]
         job_id = selection['job_id']
         L.info('ID: %s', job_id)
         return job_id
