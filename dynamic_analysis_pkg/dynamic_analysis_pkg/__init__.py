@@ -16,35 +16,38 @@ L.setLevel(logging.INFO)
 UNICORE_ENDPOINT = 'https://bspsa.cineca.it/advanced/pizdaint/rest/core'
 
 
-class AResults:
+class Results:
     '''
     Based on a simulation id, fetch the results using Unicore API
     '''
-    DEFAULT_CIRCUIT_DIR = '/home/data-bbp/20191017/'
-    DEFAULT_WD_BASE = '/home/simulation-results'
-    ORIGIN_CIRCUIT_PATH = '/store/hbp/ich002/antonel/O1/20191017/'
-    HPC_DIR_BASE = '/scratch/snx3000/unicore/FILESPACE/'
+    DEFAULT_CIRCUIT_DIR = Path('/home/data-bbp/20191017/')
+    DEFAULT_WD_BASE = Path('/home/simulation-results')
+    ORIGIN_CIRCUIT_PATH = Path('/store/hbp/ich002/antonel/O1/20191017/')
+    HPC_DIR_BASE = Path('/scratch/snx3000/unicore/FILESPACE/')
     JOB_BASE = os.path.join(UNICORE_ENDPOINT, 'jobs')
 
     def __init__(self, token, sim_id, base_working_directory=None, new_circuit_path=None):
-        self.hpc_dir_path = None
-        self.files_list = None
-        self.circuit_dir = None
-        self.local_dir = None
 
         if base_working_directory is None:
             base_working_directory = self.DEFAULT_WD_BASE
         if new_circuit_path is None:
             new_circuit_path = self.DEFAULT_CIRCUIT_DIR
 
-        self.define_paths(sim_id, base_working_directory, new_circuit_path)
+        self.files_list = None
+
+        self.circuit_dir = Path(new_circuit_path)
+        if not self.circuit_dir.is_dir():
+            raise ValueError('[ERROR] Circuit path does not exists')
+
+        self.local_dir = Path(base_working_directory) / sim_id
+        self.local_dir.mkdir(parents=True, exist_ok=True)
+
+        self.hpc_dir_path = self.HPC_DIR_BASE / sim_id
+
         self.fetch_results(token, sim_id)
-        self.blueconfig = Path(self.local_dir) / 'BlueConfig'
+        self.blueconfig = self.local_dir / 'BlueConfig'
 
-    def fetch_results(self, token, sim_id=None):
-        if not sim_id:
-            raise ValueError('[Error] Simulation ID not provided')
-
+    def fetch_results(self, token, sim_id):
         self.retrieve_sim_info(token, sim_id)
         self.get_sim_results()
 
@@ -63,26 +66,18 @@ class AResults:
         self.download_file_to_storage('out.dat')
         L.info('Result were saved at: %s', self.local_dir)
 
-    def define_paths(self, sim_id, working_directory, new_circuit_path):
-        if not Path(new_circuit_path).is_dir():
-            raise ValueError('[ERROR] Circuit path does not exists')
-        else:
-            self.circuit_dir = new_circuit_path
-
-        self.local_dir = Path(working_directory) / Path(sim_id)
-        self.local_dir.mkdir(parents=True, exist_ok=True)
-
-        self.hpc_dir_path = Path(self.HPC_DIR_BASE) / Path(sim_id)
-
     def download_file_to_storage(self, file_name):
         ''' function to download the file and add it to kernel file system '''
-        file_output_path = Path(self.local_dir) / Path(file_name)
+        file_output_path = self.local_dir / file_name
         if file_output_path.exists():
             L.info('- [%s] file already exists. Skipping download.', file_name)
             return
 
         L.info('- Fetching [%s] ...', file_name)
-        current_file = self.files_list[file_name]
+        try:
+            current_file = self.files_list[file_name]
+        except:
+            raise KeyError('The file [{}] is not present on the simulation results'.format(file_name))
 
         if file_name == 'BlueConfig':
             file_content = current_file.raw().read()
@@ -118,7 +113,7 @@ class FetchMultipleResults:
             self.values.append(Results(token, sim, base_working_directory))
 
 
-class AJobFinder:
+class JobFinder:
     '''
     List the jobs launched using Uncicore in the Service Account Piz-Daint
     '''
@@ -131,7 +126,6 @@ class AJobFinder:
 
     def show_list(self, amount_jobs_to_show=1000):
         full_jobs_list = []
-        fetched_index = 0
         for job in tqdm(self.jobs[:amount_jobs_to_show], desc='Fetching jobs'):
             raw_time = job.properties['submissionTime']
             full_time = datetime.strptime(raw_time, '%Y-%m-%dT%H:%M:%S%z')
@@ -139,20 +133,16 @@ class AJobFinder:
             name = job.properties['name']
             status = job.properties['status']
             job_id = PurePath(job.properties['_links']['self']['href']).name
-            full_jobs_list.append([fetched_index, name, date, job_id, full_time, status])
-            fetched_index += 1
+            full_jobs_list.append([name, date, job_id, full_time, status])
 
-        columns = ['index', 'name', 'date', 'job_id', 'timestamp', 'status']
+        columns = ['name', 'date', 'job_id', 'timestamp', 'status']
         self.sorted_results = pd.DataFrame(full_jobs_list, columns=columns).sort_values(
             by=["timestamp"]
-        )
+        ).reset_index()
 
-        showing_columns = ['index', 'name', 'date', 'status']
-        # insert index for user selection
-        self.sorted_results['index'] = range(0, amount_jobs_to_show)
+        showing_columns = ['name', 'date', 'status']
         print(tabulate(self.sorted_results[showing_columns],
-                       headers=showing_columns,
-                       showindex=False))
+                       headers=showing_columns))
 
     def find_id_by_index(self):
         job_selection_index = input('Please select the index that you want to import:')
