@@ -14,7 +14,8 @@ L = logging.getLogger('dynamic-analysis-pkg')
 L.setLevel(logging.INFO)
 
 UNICORE_ENDPOINT = 'https://bspsa.cineca.it/advanced/pizdaint/rest/core'
-
+BLUE_CONFIG = 'BlueConfig'
+SIMULATION_CONFIG = 'simulation_config.json'
 
 class Results:
     '''
@@ -22,7 +23,7 @@ class Results:
     '''
     DEFAULT_CIRCUIT_DIR = Path('/home/data-bbp/20191017/')
     DEFAULT_WD_BASE = Path('/home/simulation-results')
-    ORIGIN_CIRCUIT_PATH = Path('/store/hbp/ich002/antonel/O1/20191017/')
+    ORIGIN_CIRCUIT_PATH = Path('/store/hbp/ich002/public/CA1.O1/mooc_sonata_circuit/')
     HPC_DIR_BASE = Path('/scratch/snx3000/unicore/FILESPACE/')
     JOB_BASE = os.path.join(UNICORE_ENDPOINT, 'jobs')
 
@@ -45,7 +46,8 @@ class Results:
         self.hpc_dir_path = self.HPC_DIR_BASE / sim_id
 
         self.fetch_results(token, sim_id)
-        self.blueconfig = self.local_dir / 'BlueConfig'
+        self.blueconfig = self.local_dir / BLUE_CONFIG
+        self.simulation_config = self.local_dir / SIMULATION_CONFIG
 
     def fetch_results(self, token, sim_id):
         self.retrieve_sim_info(token, sim_id)
@@ -61,7 +63,8 @@ class Results:
         self.files_list = storage.listdir()
 
     def get_sim_results(self):
-        self.download_file_to_storage('BlueConfig')
+        self.download_file_to_storage(BLUE_CONFIG)
+        self.download_file_to_storage(SIMULATION_CONFIG)
         self.download_report()
         self.download_file_to_storage('out.dat')
         L.info('Result were saved at: %s', self.local_dir)
@@ -75,10 +78,10 @@ class Results:
 
         L.info('- Fetching [%s] ...', file_name)
         if file_name not in self.files_list:
-            raise KeyError('The file [{}] is not present on the results'.format(file_name))
+            L.error('The file [{}] is not present on the results'.format(file_name))
         current_file = self.files_list[file_name]
 
-        if file_name == 'BlueConfig':
+        if file_name == BLUE_CONFIG or file_name == SIMULATION_CONFIG:
             file_content = current_file.raw().read()
             bc_str = file_content.decode('utf-8')
             writable_content = bc_str.replace(str(self.ORIGIN_CIRCUIT_PATH), str(self.circuit_dir))
@@ -91,10 +94,8 @@ class Results:
             current_file.download(file_name) # moves to home always
             move(file_name, file_output_path)
 
-        L.info('- [%s] downloaded', file_name)
-
     def download_report(self):
-        reports = [x for x in self.files_list if x.endswith('.bbp')]
+        reports = [x for x in self.files_list if x.endswith('.h5')]
         if not reports:
             L.info('No reports were found')
         for report in reports:
