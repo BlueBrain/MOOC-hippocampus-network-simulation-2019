@@ -2,7 +2,7 @@
 
 
 ## Launch Simulation
-Go to [Simulation-Launcher-UI](https://bbp.epfl.ch/public/dev.simulationapp/index.html#/)
+Go to [Simulation-Launcher-UI](https://bbp.epfl.ch/public/simulationapp/index.html#/circuits/hippo_mooc_sa_microcircuit)
 
 Full documentation [Github](https://github.com/lbologna/hbp-sp6-guidebook/blob/master/source/online_usecases/brain_area_circuit_in_silico_experiments/hippocampus/configure_run_brainregion_preconf_model_data/configure_run_brainregion_preconf_model_data.rst)
 
@@ -18,6 +18,7 @@ In this section we will define the stimulation that we want to apply and in whic
 - A new window will pop-up and it should looks like the one below (in case of question please check the full doucmentation mentioned above)
 
   ![](images/stimulus_edit.png)
+
 
 #### Define report(s):
 In this section we will define the reports that we want to obtain from the simulation We need to specify from which population we want to obtain the data from.
@@ -39,6 +40,7 @@ In this section we will define the resources that we want to use for the previou
 - Start the simulation clicking on ‘Run Simulation’ button.
 - After the simulation starts you will be redirected to a detail page.
 
+
 ## Run Predefined Analysis
 In this section you will learn how to launch some predefined analysis like: _Peristimulus Time Histogram_, _Spike Raster Plot_ or _Voltage Trace Plot_
 
@@ -54,26 +56,6 @@ In this section you will learn how to launch some predefined analysis like: _Per
 
   ![analysis_results](images/analysis_results.png)
 
-## Run Analysis in Jupyter Notebook
-In this section you will learn how to analyse a simulation using Jupyter Notebook in Collab.
-
-- From the detailed page
-
-  ![analysis_in_notebook](images/launch_analysis_nb.png)
-
-- Select the type of analysis that you want to perform.
-
-  ![launch_viz](images/select_analysis_nb.png)
-
-- You should be redirected to a new page to choose the collab where you want to place the analysis notebook.
-
-  ![launch_viz](images/select_collab.png)
-
-- Search from your collabs or create a new one.
-
-- After being redirected you should see a Jupyter Notebook in the selected Collab
-
-  ![run_notebook](images/run_notebook.png)
 
 ## Visualize circuit using Brayns
 
