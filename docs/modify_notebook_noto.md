@@ -3,7 +3,10 @@
 - Click on `Open Jupyter Lab` button
 - After the Jupyter Lab is open you can check the content of the notebooks
 
+### Create a new branch to work on
+`git checkout -b YOUR_NEW_BRANCH_NAME origin/main`
+
 ### Modify notebook and save changes
 - Modify the notebook
 - Open a terminal on Jupyter Lab and change directory to the github repo (`cd ~/MOOC-hippocampus-network-simulation-2019`)
-- Commit changes and push to the branch (for now `sync-notebooks`)
+- Commit changes and push to the branch
