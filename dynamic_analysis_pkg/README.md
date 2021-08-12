@@ -4,31 +4,17 @@
 ### Import package
 ```
 import dynamic_analysis_pkg
-from collab_oidc_client.oidc.client import BBPOIDCClient
 ```
 
-### Get HBP token
-```
-USER = 'YOUR_HBP_USERNAME'
-oidc = BBPOIDCClient.implicit_auth(user=USER)
-```
+### Get token
+This should be provided by EDX to use for this exercise
+`token = 'YOUR_EDX_TOKEN'`
 
-### Find job based on a list
-```
-finder = dynamic_analysis_pkg.JobFinder(oidc.credentials.access_token)
-finder.show_list(25)
-```
-
-### Pick the job by index
-`job_id = finder.find_id_by_index()`
-
-### OR select a job by id
+### Select a job by id
 `job_id = 'YOUR_JOB_ID'`
 
-
-
 ### Pull the files
-`sim_result = dynamic_analysis_pkg.Results(oidc.credentials.access_token, job_id)`
+`sim_result = dynamic_analysis_pkg.Results(token, job_id)`
 
 ### Get the paths to:
 ```
